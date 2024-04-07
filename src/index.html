@@ -8,20 +8,23 @@
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
-    <form action="submit" class="search-form">
-      <label for="images" class="label"></label>
-      <input
-        type="text"
-        name="images"
-        class="search-input"
-        autocomplete="off"
-        required
-        placeholder="Search images..."
-      />
-      <button class="search-button" type="submit">Search</button>
-    </form>
+    <div class="form-container">
+      <form action="submit" class="search-form">
+        <label for="images" class="label" ></label>
+        <input
+          type="text"
+          name="images"
+          class="search-input"
+          autocomplete="off"
+          id ="images"
+          required
+          placeholder="Search images..."
+        />
+        <button class="search-button" type="submit">Search</button>
+      </form>
+    </div>
     <ul class="img-list"></ul>
-
+    <div class="loader"></div>
     <script type="module" src="./main.js"></script>
   </body>
 </html>

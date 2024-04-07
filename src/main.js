@@ -1,37 +1,68 @@
 import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
+
+import SimpleLightbox from 'simplelightbox';
 
 const imgGallery = document.querySelector('.img-list');
 
-console.log(imgGallery);
-
 import { fetchImages } from './js/pixabay-api';
 
-import { createMarkup } from './js/render-functions';
+import { createMarkup, showLoader, hideLoader } from './js/render-functions';
 
 const form = document.querySelector('.search-form');
 form.addEventListener('submit', onSubmit);
-console.dir(form);
 
 function onSubmit(event) {
   event.preventDefault();
+  imgGallery.innerHTML = '';
   const elements = event.target.elements;
-  if (elements.images.value.trim() === '') {
+  const userSearch = elements.images.value.trim();
+  if (userSearch === '') {
     return;
   }
-  const userSearch = elements.images.value.trim();
+  showLoader();
+
   fetchImages(userSearch)
-    .then(data =>
-      imgGallery.insertAdjacentHTML('beforeend', createMarkup(data))
-    )
+    .then(data => {
+      imgGallery.insertAdjacentHTML('beforeend', createMarkup(data));
+      gallery.refresh();
+    })
     .catch(error => {
-      alert(
-        'Sorry, there are no images matching your search query. Please try again!'
-      );
       iziToast.show({
-        title: 'Hey',
-        message: 'What would you like to add?',
+        titleColor: '#fff',
+        message:
+          'Sorry, there are no images matching<br>your search query.Please try again!',
+        messageColor: '#fff',
+        messageSize: '16px',
+        messageLineHeight: '150%',
+        backgroundColor: ' #ef4040',
+        // icon: 'img/error.svg',
+        // iconUrl: './img/error.svg',
+        position: 'topRight',
+        close: true,
+        closeOnEscape: false,
+        closeOnClick: false,
+        timeout: 5000,
+        resetOnHover: true,
+        icon: 'img/error.svg',
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX',
       });
+    })
+    .finally(() => {
+      hideLoader();
     });
-  //   console.log(userSearch);
+  form.reset();
 }
+
+let gallery = new SimpleLightbox('.img-list .list-link', {
+  overlayOpacity: 0.8,
+  captionsData: 'alt',
+  captionDelay: 250,
+  captionPosition: 'bottom',
+});
+
+gallery.on('shown.simplelightbox', function () {
+  const enlargedImg = document.querySelector('.sl-image > img');
+  enlargedImg.style.width = '100%';
+  enlargedImg.style.maxHeight = '100%';
+});
